@@ -5,5 +5,5 @@ a 1 four
 st 1 temp
 five dc f 4
 four dc f 5
-temp db 1 f
+temp db 1f
 end
