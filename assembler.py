@@ -26,6 +26,14 @@ class Compiler:
         tokens = fp.read().split()
         return tokens
 
+    def print_symbol_table(self):
+        print("\n")
+        print("SYMBOL\tINDEX\tVALUE\tSIZE")
+        '''for key, val in self.symbol_table:
+            index, value, size = str(val).split()
+            print("{sym}\t{index}\t{val}\t{size}".format(sym=key, index=index, val=value, size=size))'''
+        print(self.symbol_table)
+
     def pass1(self, filename):
         self.get_sizes('size.txt')
         tokens = self.tokenize(filename)
@@ -37,12 +45,11 @@ class Compiler:
         op = None
         while True:
             if tokens[self.count] == "end":
-                print("\n\nProgram Ended")
                 break
             else:
                 if tokens[self.count] in self.opcode:  # token is an OPCODE
                     op = tokens[self.count]
-                    op_size = self.opcode[op]
+                    op_size = int(self.opcode[op])
                     self.count += 1
                     if tokens[self.count].isnumeric():  # if opcode is followed by register (ex: L 1 FIVE)
                         reg = tokens[self.count]
@@ -68,26 +75,29 @@ class Compiler:
                                                                                                basereg=self.base_reg))
                             LC += op_size
                             self.count += 1
-                elif tokens[self.count] in self.symbol_table:  # token is a SYMBOL
+                elif tokens[self.count].isalpha():  # token is a SYMBOL
                     op = tokens[self.count]
                     self.count += 2
-                    if tokens[self.count] in self.opcode:  # if 'f' (full word)
-                        op_size = self.opcode[tokens[self.count]]
+                    if tokens[self.count] in self.opcode:  # ex: 'f' (full word)
+                        op_size = int(self.opcode[tokens[self.count]])
                         self.count += 1
                         val = tokens[self.count]
                         self.symbol_table[op] = "{index} {value} {size}".format(index=LC, value=val, size=op_size)
                         self.count += 1
                         LC += op_size
-                    else:  # if '1f, 2f , ...'
-                        num = str(tokens[self.count]).split()[0]
-                        word_type = str(tokens[self.count]).split()[1]
-                        op_size = self.opcode[word_type] * num
+                    else:  # ex: '1f, 2f , ...'
+                        num = (tokens[self.count])[0]
+                        word_type = (tokens[self.count])[1]
+                        op_size = int(self.opcode[word_type]) * int(num)
                         val = "--"
                         self.symbol_table[op] = "{index} {value} {size}".format(index=LC, value=val, size=op_size)
                         self.count += 1
                         LC += op_size
-
-                        # TODO: change line 71 -> use isalpha() to check first whether it is a symbol.
+        self.print_symbol_table()
+        print("\nProgram Ended")
 
 compiler = Compiler()
 compiler.pass1('xyz.txt')
+
+# TODO: Clean up the output
+# TODO: Make pass 2
