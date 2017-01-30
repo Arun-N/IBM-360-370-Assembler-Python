@@ -94,10 +94,13 @@ class Compiler:
                         self.count += 1
                         LC += op_size
         self.print_symbol_table()
-        print("\nProgram Ended")
+
+        if self.pass_two_req:
+            self.count = 6
+            self.pass_two_req = False
+            self.pass1('xyz.txt')   # 2nd pass
 
 compiler = Compiler()
 compiler.pass1('xyz.txt')
 
 # TODO: Clean up the output
-# TODO: Make pass 2
