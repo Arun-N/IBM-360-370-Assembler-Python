@@ -28,7 +28,7 @@ class Compiler:
 
     def print_symbol_table(self):
         print("\n")
-        print("SYMBOL\tINDEX\tVALUE\tSIZE")
+        print("(SYMBOL\tINDEX\tVALUE\tSIZE)")
         '''for key, val in self.symbol_table:
             index, value, size = str(val).split()
             print("{sym}\t{index}\t{val}\t{size}".format(sym=key, index=index, val=value, size=size))'''
@@ -40,7 +40,7 @@ class Compiler:
         self.prog_name = tokens[0]
         self.base_index = tokens[2]
         self.base_reg = tokens[5]
-        print("LC\tOPCODE\tREG\tOFFSET\tINDEX\tBASE REG")
+        print("LC OPCODE REG OFFSET INDEX BASE_REG")
         LC, op_size, reg, offset, b_index, b_reg = 0, 0, 0, 0, 0, 0
         op = None
         while True:
@@ -56,7 +56,7 @@ class Compiler:
                         self.count += 1
                         if tokens[self.count] in self.symbol_table:  # if there is entry of SYMBOL, get offset
                             offset = str(self.symbol_table[tokens[self.count]]).split()[0]
-                            print("{lc}\t{opcode}\t{reg}\t{offset}\t{index}\t{basereg}".format(lc=LC,
+                            print("{lc}     {opcode}    {reg}    {offset}    {index}    {basereg}".format(lc=LC,
                                                                                                opcode=op,
                                                                                                reg=reg,
                                                                                                offset=offset,
@@ -68,7 +68,7 @@ class Compiler:
                             self.symbol_table[tokens[self.count]] = ""  # if there is no entry, make a new one
                             offset = "__"  # 2nd pass required
                             self.pass_two_req = True
-                            print("{lc}\t{opcode}\t{reg}\t{offset}\t{index}\t{basereg}".format(lc=LC, opcode=op,
+                            print("{lc}     {opcode}   {reg}    {offset}    {index}    {basereg}".format(lc=LC, opcode=op,
                                                                                                reg=reg,
                                                                                                offset=offset,
                                                                                                index=self.base_index,
@@ -98,9 +98,8 @@ class Compiler:
         if self.pass_two_req:
             self.count = 6
             self.pass_two_req = False
+            print("---------------------------------------------------------")
             self.pass1('xyz.txt')   # 2nd pass
 
 compiler = Compiler()
 compiler.pass1('xyz.txt')
-
-# TODO: Clean up the output
